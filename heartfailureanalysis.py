@@ -1,13 +1,12 @@
 import matplotlib.pyplot as plt 
 import numpy as np 
 import pandas as pd 
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import RidgeClassifier
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
-# graph, try other scaling, regression models
-# training time?
 # ---------------------------------------------
 df = pd.read_csv("heart_failure_clinical_records_dataset.csv")
 # no scaling
@@ -17,11 +16,28 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
 
 # ---------------------------------------------
 # graphing relations between variables
-# creatine and death
-print(X['creatinine_phosphokinase'])
-# platelets and death
+corr = df.corr()
+sns.heatmap(corr, xticklabels=df.columns, yticklabels=df.columns)
+
+# kinase and death
+grouped = df.groupby(df.DEATH_EVENT)
+df_zero = grouped.get_group(0)
+df_one = grouped.get_group(0)
+plt.figure()
+plt.hist([df_zero["creatinine_phosphokinase"],df_one["creatinine_phosphokinase"]], bins = 15, stacked=True, density=True)
+plt.legend(('Death', 'No Death'), loc='upper right')
+plt.xlabel("creatinine_phosphokinase")
+# creatinine and death
+plt.figure()
+plt.hist([df_zero["serum_creatinine"],df_one["serum_creatinine"]], bins = 15, stacked=True, density=True)
+plt.legend(('Death', 'No Death'), loc='upper right')
+plt.xlabel("serum_creatinine")
 # age and death
-# smoking and death
+plt.figure()
+plt.hist([df_zero["age"],df_one["age"]], bins = 15, stacked=True, density=True)
+plt.legend(('Death', 'No Death'), loc='upper right')
+plt.xlabel("age")
+
 # ---------------------------------------------
 # scaling w/ minmax
 mm_scaler = preprocessing.MinMaxScaler()
@@ -53,13 +69,6 @@ accuracyscore = accuracy_score(y_test_ma, predictLogY)
 print("logisticregr - ma")
 print(accuracyscore)
 
-# logistic regression w/ no scaling
-logRegr = LogisticRegression().fit(X_train, y_train)
-predictLogY = logRegr.predict(X_test)
-
-accuracyscore = accuracy_score(y_test, predictLogY)
-print("logisticregr - not scaled")
-print(accuracyscore)
 # ---------------------------------------------
 # ridge classifier w/ minmax
 ridgeC = RidgeClassifier().fit(X_train_mm, y_train_mm)
@@ -77,14 +86,5 @@ predictRidgeY = ridgeC.predict(X_test_ma)
 
 accuracyscore = accuracy_score(y_test_ma, predictRidgeY)
 print("ridgeclass - ma")
-print(accuracyscore)
-
-# ridge classifier w/ no scaling
-ridgeC = RidgeClassifier().fit(X_train, y_train)
-
-predictRidgeY = ridgeC.predict(X_test)
-
-accuracyscore = accuracy_score(y_test, predictRidgeY)
-print("ridgeclass - not scaled")
 print(accuracyscore)
 # ---------------------------------------------
