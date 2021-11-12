@@ -14,10 +14,10 @@ def heatMap(df):
     sns.heatmap(corr, xticklabels=df.columns, yticklabels=df.columns)
     plt.show()
 
-def ifBinary(colName, data):
+def ifBinary(colName, df):
     uniqueList = df[colName].unique()
     uniqueList.sort()
-    if uniqueList == [0, 1]:
+    if len(uniqueList) == 2 and (0 in uniqueList) and (1 in uniqueList):
         return True
     else:
         return False
@@ -35,10 +35,11 @@ def graphBinaryBarGraph(vname1, binaryNameY, df, binsNum):
     df_one = grouped.get_group(1)
     plt.figure()
     plt.hist([df_zero[vname1],df_one[vname1]], bins = binsNum, stacked=True, density=True)
-    plt.legend((vname1, "no" + vname1), loc='upper right')
+    plt.legend(("0", "1"), loc='upper right')
     plt.xlabel(vname1)
     plt.show()
     # add some prediction stuff
+
 def graphScatterPlot(v1, v2):
     plt.scatter(v1, v2)
     plt.show()
@@ -130,7 +131,13 @@ def main():
     # ---------------------------------------------
     heatMap(df)
     # ---------------------------------------------
-    while graphInput != "q":
-        
+    quit = False
+    while quit == False:
+        userInput = input("Graph relationship between 2 variables - Format: X variable x Y variable: ")
+        if userInput == "quit":
+            quit = True
+        else:
+            vars = userInput.split(" x ")
+            graphRelation(vars[0], vars[1], df)
 main()
     
