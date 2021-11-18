@@ -38,10 +38,14 @@ def graphBinaryBarGraph(vname1, binaryNameY, df, binsNum):
     plt.legend(("0", "1"), loc='upper right')
     plt.xlabel(vname1)
     plt.show()
-    # add some prediction stuff
 
 def graphScatterPlot(v1, v2):
     plt.scatter(v1, v2)
+    V1_train,V1_test,V2_train,V2_test = train_test_split(v1, v2, test_size=0.2)
+    logRegr = LogisticRegression().fit(V1_train.values.reshape(-1, 1), V2_train)
+    x = np.arange(np.ptp(v1.values, axis = 0))
+    print(x)
+    plt.plot(x.reshape(-1, 1), logRegr.predict(x.reshape(-1, 1)), color = "green")
     plt.show()
 
 def graphRelation(vname1, vname2, df):
@@ -58,28 +62,6 @@ def graphRelation(vname1, vname2, df):
         y = df[vname2]
     
     graphScatterPlot(X, y)
-
-"""
-# pressure and death
-grouped = df.groupby(df.DEATH_EVENT)
-df_zero = grouped.get_group(0)
-df_one = grouped.get_group(1)
-plt.figure()
-plt.hist([df_zero["high_blood_pressure"],df_one["high_blood_pressure"]], bins = 15, stacked=True, density=True)
-plt.legend(('Death', 'No Death'), loc='upper right')
-plt.xlabel("high_blood_pressure")
-# creatinine and death
-plt.figure()
-plt.hist([df_zero["serum_creatinine"],df_one["serum_creatinine"]], bins = 15, stacked=True, density=True)
-plt.legend(('Death', 'No Death'), loc='upper right')
-plt.xlabel("serum_creatinine")
-# age and death
-plt.figure()
-plt.hist([df_zero["age"],df_one["age"]], bins = 15, stacked=True, density=True)
-plt.legend(('Death', 'No Death'), loc='upper right')
-plt.xlabel("age")
-plt.show()
-"""
 # ---------------------------------------------
 def logRegrCalcAccuracy(X_train, X_test, y_train, y_test):
 # logistic regression w/ minmax
