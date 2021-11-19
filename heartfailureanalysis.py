@@ -9,12 +9,22 @@ from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
 # ---------------------------------------------
 def heatMap(df):
+"""
+Purpose: Draw a heatmap with all of the variables from the dataset
+Parameters: df, pandas dataframe of all data from csv 
+Return: none
+"""
     # graphing relations between variables
     corr = df.corr()
     sns.heatmap(corr, xticklabels=df.columns, yticklabels=df.columns)
     plt.show()
 
 def ifBinary(colName, df):
+"""
+Purpose: Determine if variable is binary
+Parameters: colName, str - name of variable; df, pandas dataframe of all data from csv 
+Return: True/False, boolean - if variable is binary
+"""
     uniqueList = df[colName].unique()
     uniqueList.sort()
     if len(uniqueList) == 2 and (0 in uniqueList) and (1 in uniqueList):
@@ -23,14 +33,24 @@ def ifBinary(colName, df):
         return False
 
 def groupBinary(vname, df):
-    grouped = df.groupby([vname]) #binaryv2 = df.DEATH_EVENT, fix when verifying 
+"""
+Purpose: Split binary values into 0 and 1
+Parameters: vname, str - name of variable; df, pandas dataframe of all data from csv 
+Return: df_zero, df_one - groupby objects from pandas dataframe of 0s and 1s separated
+"""
+    grouped = df.groupby([vname])
     df_zero = grouped.get_group(0)
     df_one = grouped.get_group(1)
     return df_zero, df_one
 
 def graphBinaryBarGraph(vname1, binaryNameY, df, binsNum):
+"""
+Purpose: Graph binary bar graph
+Parameters: vname1, str - name of x variable; binaryNameY, str - name of y variable; df, pandas dataframe of all data from csv; binsNum - int, number of bins to graph
+Return: None
+"""
     # vname1 is string
-    grouped = df.groupby([binaryNameY]) #binaryv2 = df.DEATH_EVENT, fix when verifying 
+    grouped = df.groupby([binaryNameY])
     df_zero = grouped.get_group(0)
     df_one = grouped.get_group(1)
     plt.figure()
@@ -40,6 +60,11 @@ def graphBinaryBarGraph(vname1, binaryNameY, df, binsNum):
     plt.show()
 
 def graphScatterPlot(v1, v2):
+"""
+Purpose: Graph scatter plot
+Parameters: v1 - Series object, all values of x variable; v2 - Series object, all values of y variable
+Return: None
+"""
     plt.scatter(v1, v2)
     V1_train,V1_test,V2_train,V2_test = train_test_split(v1, v2, test_size=0.2)
     logRegr = LogisticRegression().fit(V1_train.values.reshape(-1, 1), V2_train)
@@ -49,6 +74,11 @@ def graphScatterPlot(v1, v2):
     plt.show()
 
 def graphRelation(vname1, vname2, df):
+"""
+Purpose: Determines how best to graph relationship between certain variables 
+Parameters: vname1, str - name of one variable; vname2, str - name of other variable; df, pandas dataframe of all data from csv 
+Return: None
+"""
     bin1 = ifBinary(vname1, df)
     bin2 = ifBinary(vname2, df)
     if bin1 and not bin2: # x is binary and y isn't
@@ -64,6 +94,12 @@ def graphRelation(vname1, vname2, df):
     graphScatterPlot(X, y)
 # ---------------------------------------------
 def logRegrCalcAccuracy(X_train, X_test, y_train, y_test):
+"""
+Purpose: Calculate the accuracy score of the logistic regression equation
+Parameters: X_train - pandas dataframe, train x variable values ; X_test  - pandas dataframe, test x variable values;
+ y_train  - pandas dataframe, train y variable values; y_test - pandas dataframe, test y variable values 
+Return: None
+"""
 # logistic regression w/ minmax
     logRegr = LogisticRegression().fit(X_train, y_train)
 
@@ -75,6 +111,12 @@ def logRegrCalcAccuracy(X_train, X_test, y_train, y_test):
 
 # ---------------------------------------------
 def ridgeClassCalcAccuracy(X_train, X_test, y_train, y_test):
+"""
+Purpose: Calculate the accuracy score of the ridge classification equation
+Parameters: X_train - pandas dataframe, train x variable values ; X_test  - pandas dataframe, test x variable values;
+ y_train  - pandas dataframe, train y variable values; y_test - pandas dataframe, test y variable values 
+Return: None
+"""
     ridgeC = RidgeClassifier().fit(X_train, y_train)
 
     predictRidgeY = ridgeC.predict(X_test)
@@ -115,6 +157,7 @@ def main():
     # ---------------------------------------------
     quit = False
     while quit == False:
+        print("To quit, type 'quit'")
         userInput = input("Graph relationship between 2 variables - Format: X variable x Y variable: ")
         if userInput == "quit":
             quit = True
